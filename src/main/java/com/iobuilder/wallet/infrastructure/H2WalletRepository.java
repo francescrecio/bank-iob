@@ -7,6 +7,7 @@ import io.quarkus.panache.common.Parameters;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.LockModeType;
+import java.util.List;
 
 @ApplicationScoped
 public class H2WalletRepository implements WalletRepository, PanacheRepositoryBase<Wallet, String> {
@@ -18,13 +19,36 @@ public class H2WalletRepository implements WalletRepository, PanacheRepositoryBa
     }
 
     @Override
+    public Wallet update(Wallet wallet) {
+        persistAndFlush(wallet);
+        return wallet;
+    }
+
+    @Override
     public Wallet findById(String id) {
         return findById(id, LockModeType.PESSIMISTIC_READ);
     }
 
     @Override
+    public Wallet findByWalletIdUsername(String walletId, String username) {
+        List<Wallet> walletList = getEntityManager().createQuery(
+                        "Select w from wallet w inner join customer c on c.id = w.userId where c.username = :username and w.id = :walletId")
+                .setParameter("username", username)
+                .setParameter("walletId", walletId)
+                .getResultList();
+
+        return walletList.size() == 0 ? null : walletList.get(0);
+    }
+
+    @Override
     public int deposit(String walletId, Float amount) {
         return update("balance = balance + :amount WHERE id = :walletId",
+                Parameters.with("amount", amount).and("walletId", walletId));
+    }
+
+    @Override
+    public int withdraw(String walletId, Float amount) {
+        return update("balance = balance - :amount WHERE id = :walletId",
                 Parameters.with("amount", amount).and("walletId", walletId));
     }
 }

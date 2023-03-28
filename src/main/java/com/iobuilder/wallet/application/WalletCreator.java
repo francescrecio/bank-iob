@@ -1,5 +1,6 @@
 package com.iobuilder.wallet.application;
 
+import com.iobuilder.user.application.UserDTO;
 import com.iobuilder.user.application.UserFinder;
 import com.iobuilder.user.domain.User;
 import com.iobuilder.wallet.domain.Wallet;
@@ -19,15 +20,19 @@ public class WalletCreator {
     UserFinder userFinder;
 
     @Transactional
-    public Wallet create(String userName) {
-        User user = userFinder.find(userName);
+    public WalletDTO create(String userName) {
+        UserDTO user = userFinder.find(userName);
 
         Wallet wallet = walletRepository.create(Wallet.builder()
                         .balance(0f)
                         .userId(user.getId())
                 .build());
 
-        return wallet;
+        return WalletDTO.builder()
+                .id(wallet.getId())
+                .userId(wallet.getUserId())
+                .balance(wallet.getBalance())
+                .build();
     }
 
 }

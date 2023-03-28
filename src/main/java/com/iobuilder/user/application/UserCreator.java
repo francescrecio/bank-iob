@@ -3,6 +3,7 @@ package com.iobuilder.user.application;
 import com.iobuilder.shared.infrastructure.security.PasswordManager;
 import com.iobuilder.user.domain.User;
 import com.iobuilder.user.domain.UserRepository;
+import com.iobuilder.user.domain.exception.UserAlreadyExistsException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,12 +19,17 @@ public class UserCreator {
     PasswordManager passwordManager;
 
     @Transactional
-    public User create(String username, String password) {
-       User user = userRepository.create(User.builder()
+    public UserDTO create(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            throw new UserAlreadyExistsException("User already exists");
+        }
+
+        user = userRepository.create(User.builder()
                .username(username)
                .password(passwordManager.encodePassword(password))
                .build());
 
-       return user;
+       return UserDTO.builder().id(user.getId()).username(username).build();
     }
 }

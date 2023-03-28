@@ -1,6 +1,7 @@
 package com.iobuilder.user.infrastructure;
 
 import com.iobuilder.user.application.UserCreator;
+import com.iobuilder.user.application.UserDTO;
 import com.iobuilder.user.application.UserLogin;
 import com.iobuilder.user.domain.User;
 
@@ -19,11 +20,11 @@ public class UserController {
 
     @Inject
     UserLogin userLogin;
-//TODO Pasar a UserDTO
+
     @POST
     @Path("/create")
     public Response create(@QueryParam("username") String username, @QueryParam("password") String password) {
-        User user = userCreator.create(username, password);
+        UserDTO user = userCreator.create(username, password);
         return Response.created(URI.create("/user/".concat(user.getId()))).entity(user).build();
     }
 

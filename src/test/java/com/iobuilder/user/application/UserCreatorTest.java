@@ -26,11 +26,12 @@ public class UserCreatorTest {
     @Test
     void testCreateUser_givenUserPassword_whenIsCorrect_thenReturnUser() {
         User user = User.builder().build();
+        UserDTO userDTO = UserDTO.builder().username("pepe").build();
         when(userRepository.create(Mockito.any())).thenReturn(user);
 
-        User userCreated = userCreator.create("pepe","password");
+        UserDTO userCreated = userCreator.create("pepe","password");
 
-        assertThat(user, is(userCreated));
+        assertThat(userDTO.getUsername(), is(userCreated.getUsername()));
     }
 
     @Test

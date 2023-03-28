@@ -2,6 +2,7 @@ package com.iobuilder.transfer.application;
 
 import com.iobuilder.transfer.domain.Transfer;
 import com.iobuilder.transfer.domain.TransferRepository;
+import com.iobuilder.transfer.domain.exception.InsufficientBalanceException;
 import com.iobuilder.wallet.application.WalletUpdater;
 import com.iobuilder.wallet.domain.Wallet;
 import com.iobuilder.wallet.domain.WalletRepository;
@@ -39,6 +40,10 @@ public class TransferCreator {
         Wallet walletOrigin = walletRepository.findById(transfer.getWalletOrigin());
         Wallet walletDestination = walletRepository.findById(transfer.getWalletDestination());
 
+        if (transferDTO.getAmount() > walletOrigin.getBalance()) {
+            throw new InsufficientBalanceException("Insufficient balance");
+        }
+
         transferRepository.create(transfer);
 
         walletOrigin.setBalance(walletOrigin.getBalance() - transferDTO.getAmount());
@@ -47,6 +52,7 @@ public class TransferCreator {
         walletUpdater.update(walletOrigin);
         walletUpdater.update(walletDestination);
 
+        transferDTO.setId(transfer.getId());
         transferDTO.setDateAt(transfer.getDateAt());
 
         return transferDTO;

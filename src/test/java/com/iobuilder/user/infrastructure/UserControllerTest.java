@@ -17,8 +17,8 @@ public class UserControllerTest {
     @Order(1)
     public void testCreateUser() {
         given().when()
-                .queryParam("username", "username")
-                .queryParam("password", "password")
+                .queryParam("username", "fran")
+                .queryParam("password", "pass")
                 .post("/user/create")
                 .then()
                 .statusCode(CREATED.getStatusCode());
@@ -28,8 +28,8 @@ public class UserControllerTest {
     @Order(2)
     public void testLogin() {
         var response = given().when()
-                .queryParam("username", "username")
-                .queryParam("password", "password")
+                .queryParam("username", "fran")
+                .queryParam("password", "pass")
                 .post("/user/login")
                 .then().statusCode(OK.getStatusCode()).extract().response();
 

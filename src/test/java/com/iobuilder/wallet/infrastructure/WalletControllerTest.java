@@ -30,8 +30,8 @@ public class WalletControllerTest {
     @Order(1)
     public void testCreateUser() {
         given().when()
-                .queryParam("username", "username")
-                .queryParam("password", "password")
+                .queryParam("username", "user")
+                .queryParam("password", "pass")
                 .post("/user/create")
                 .then()
                 .statusCode(CREATED.getStatusCode());
@@ -41,8 +41,8 @@ public class WalletControllerTest {
     @Order(2)
     public void testLogin() {
         var response = given().when()
-                .queryParam("username", "username")
-                .queryParam("password", "password")
+                .queryParam("username", "user")
+                .queryParam("password", "pass")
                 .post("/user/login")
                 .then().statusCode(OK.getStatusCode()).extract().response();
         token = response.getBody().asString();
